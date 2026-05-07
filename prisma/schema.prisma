@@ -1,0 +1,130 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt // <--- ADD THIS LINE
+}
+
+model Product {
+  id               String           @id @default(cuid())
+  name             String
+  title            String
+  slug             String           @unique
+  description      String
+  shortDescription String?
+  price            Float
+  discountedPrice  Float?
+  quantity         Int              @default(0)
+  images           String[]
+  categoryId       String
+  category         Category         @relation(fields: [categoryId], references: [id])
+  heroBanners      HeroBanner[] 
+  heroSliders      HeroSlider[]
+  countdowns       Countdown[]
+  productVariants  ProductVariant[] 
+  reviews          Review[]         
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+model ProductVariant {
+  id        String  @id @default(cuid())
+  image     String?
+  color     String?
+  size      String?
+  isDefault Boolean @default(false)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  rating     Int
+  comment    String?
+  isApproved Boolean  @default(false)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+model Countdown {
+  id          String   @id @default(cuid())
+  title       String
+  subtitle    String?
+  targetDate  DateTime
+  productId   String?
+  product     Product? @relation(fields: [productId], references: [id])
+  updatedAt   DateTime @updatedAt
+}
+
+model User {
+  id    String @id @default(cuid())
+  email String @unique
+  name  String?
+}
+
+model seoSetting {
+  id          String   @id @default(cuid())
+  siteName    String?  
+  title       String?
+  description String?
+  keywords    String?
+  ogImage     String?
+  updatedAt   DateTime @updatedAt
+}
+
+model HeaderSetting {
+  id          String   @id @default(cuid())
+  logo        String?
+  announcement String?
+  contactEmail String?
+  updatedAt    DateTime @updatedAt
+}
+
+model HeroBanner {
+  id          String   @id @default(cuid())
+  title       String?
+  subtitle    String?
+  image       String?
+  link        String?
+  productId   String?
+  product     Product? @relation(fields: [productId], references: [id])
+  updatedAt   DateTime @updatedAt
+}
+
+
+model FooterSetting {
+  id          String   @id @default(cuid())
+  content     String?
+  copyright   String?
+  updatedAt   DateTime @updatedAt
+}
+
+model SocialMedia {
+  id       String @id @default(cuid())
+  platform String
+  url      String
+}
+
+model HeroSlider {
+  id          String   @id @default(cuid())
+  title       String?
+  subtitle    String?
+  image       String?
+  link        String?
+  productId   String?
+  product     Product? @relation(fields: [productId], references: [id])
+  updatedAt   DateTime @updatedAt
+}
